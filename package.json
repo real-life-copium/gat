@@ -1,0 +1,14 @@
+{
+  "name": "gat",
+  "module": "index.js",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "webdav": "^5.3.0"
+  }
+}
