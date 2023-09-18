@@ -12,7 +12,7 @@ const TAG_KEYS = [
 
 /**
  * @param {string} deviceName
- * @returns {[string, number]}
+ * @returns {[string, string, number]}
 **/
 function getPlatform(deviceName) {
   const parts = deviceName.split("-");
@@ -20,7 +20,9 @@ function getPlatform(deviceName) {
   if (Number.isNaN(last)) {
     throw new Error(`device name ${deviceName} is not valid`);
   }
-  return [parts.join("-"), last];
+  const name = parts.join("-");
+  const squashedName = parts.join("").toLowerCase();
+  return [name, squashedName, last];
 }
 
 if (process.argv.length < 3) {
@@ -32,7 +34,7 @@ if (!Bun.env.WEBDAV_PASSWORD) {
 }
 
 const deviceName = process.argv[2];
-const [codeName, index] = getPlatform(deviceName);
+const [codeName, squashedCodeName, index] = getPlatform(deviceName);
 
 const client = createClient(PLATFORMS_PATH, {
   username: "sutton",
@@ -43,7 +45,14 @@ const bytes = await client.getFileContents("sutton-platform-tracker.json");
 /** @type {any[]} */
 const platforms = JSON.parse(bytes.toString());
 
-const platform = platforms.find(p => p[CODE_NAME_KEY] === codeName);
+const platform = platforms.find(p => {
+  const name = p[CODE_NAME_KEY];
+  if (!name) {
+    return false;
+  }
+  const squashedName = name.toLowerCase().replace(/\s/g, "");
+  return squashedName === squashedCodeName;
+});
 if (!platform) {
   throw new Error(`platform ${codeName} not found`);
 }
