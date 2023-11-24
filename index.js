@@ -57,11 +57,6 @@ if (!platform) {
   throw new Error(`platform ${codeName} not found`);
 }
 
-const cpuVendor = platform[CPU_VENDOR_KEY];
-if (!cpuVendor) {
-  throw new Error(`platform ${codeName} is missing ${CPU_VENDOR_KEY}`);
-}
-
 const engineer = platform[ENGINEER_KEY];
 if (!engineer) {
   throw new Error(`platform ${codeName} is missing ${ENGINEER_KEY}`);
@@ -69,16 +64,6 @@ if (!engineer) {
 
 const lpTag = TAG_KEYS.map(key => platform[key]).find(t => t) || codeName.toLowerCase();
 const tags = [lpTag, `${lpTag}-${index}`];
-switch (cpuVendor.toLowerCase()) {
-  case "intel":
-    tags.push("ihv-intel");
-    break;
-  case "amd":
-    tags.push("ihv-amd");
-    break;
-  default:
-    throw new Error(`unknown cpu vendor ${cpuVendor}`);
-}
 
 const args = [
   "-p", "sutton",
