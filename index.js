@@ -3,7 +3,7 @@ import { createClient } from "webdav";
 
 const PLATFORMS_PATH = "https://oem-share.canonical.com/share/sutton/Platforms";
 const CODE_NAME_KEY = "Code_Name";
-const CPU_VENDOR_KEY = "CPU_Vendor";
+const PLATFORM_KEY = "Canonical_Platform_Code_name";
 const ENGINEER_KEY = "Canonical_Eng";
 const TAG_KEYS = [
   "Official_Tag",
@@ -26,7 +26,7 @@ function getPlatform(deviceName) {
 }
 
 if (process.argv.length < 3) {
-  throw new Error("usage: bun run index.js {DEVICE_NAME}");
+ throw new Error("usage: bun run index.js {DEVICE_NAME}");
 }
 
 if (!Bun.env.WEBDAV_PASSWORD) {
@@ -64,6 +64,9 @@ if (!engineer) {
 
 const lpTag = TAG_KEYS.map(key => platform[key]).find(t => t) || codeName.toLowerCase();
 const tags = [lpTag, `${lpTag}-${index}`];
+if (platform[PLATFORM_KEY]) {
+  tags.unshift(platform[PLATFORM_KEY]);
+}
 
 const args = [
   "-p", "sutton",
