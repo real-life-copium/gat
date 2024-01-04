@@ -1,4 +1,4 @@
-#!/usr/bin/env -S bun run
+#!/usr/bin/env bun
 import { createClient } from "webdav";
 
 const PLATFORMS_PATH = "https://oem-share.canonical.com/share/sutton/Platforms";
