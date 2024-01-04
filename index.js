@@ -10,6 +10,12 @@ const TAG_KEYS = [
   "LP_Tag_short",
 ];
 
+const PRODUCT_FAMILY_KEY = "BU";
+const BIOS_PREFIX_KEY = "BIOS_first_3_bytes";
+
+const PRODUCT_FAMILY = (Bun.env.PRODUCT_FAMILY || "").toLowerCase();
+const BIOS_VERSION = (Bun.env.BIOS_VERSION || "").toLowerCase();
+
 /**
  * @param {string} deviceName
  * @returns {[string, string, number]}
@@ -51,7 +57,15 @@ const platform = platforms.find(p => {
     return false;
   }
   const squashedName = name.toLowerCase().replace(/\s/g, "");
-  return squashedName === squashedCodeName;
+  if (squashedName === squashedCodeName) {
+    return true;
+  }
+  if (BIOS_VERSION && PRODUCT_FAMILY) {
+    const family = p[PRODUCT_FAMILY_KEY].toLowerCase();
+    const biosPrefix = p[BIOS_PREFIX_KEY].toLowerCase();
+    return family === PRODUCT_FAMILY && BIOS_VERSION.startsWith(biosPrefix);
+  }
+  return false;
 });
 if (!platform) {
   throw new Error(`platform ${codeName} not found`);
