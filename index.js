@@ -63,7 +63,9 @@ const platform = platforms.find(p => {
   if (BIOS_VERSION && PRODUCT_FAMILY) {
     const family = p[PRODUCT_FAMILY_KEY].toLowerCase();
     const biosPrefix = p[BIOS_PREFIX_KEY].toLowerCase();
-    return family === PRODUCT_FAMILY && BIOS_VERSION.startsWith(biosPrefix);
+    return family === PRODUCT_FAMILY
+      && biosPrefix
+      && BIOS_VERSION.startsWith(biosPrefix);
   }
   return false;
 });
