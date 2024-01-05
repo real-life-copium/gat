@@ -1,20 +1,16 @@
 #!/usr/bin/env bun
 import { createClient } from "webdav";
+import ed from "edit-distance";
 
 const PLATFORMS_PATH = "https://oem-share.canonical.com/share/sutton/Platforms";
 const CODE_NAME_KEY = "Code_Name";
 const PLATFORM_KEY = "Canonical_Platform_Code_name";
+const STATUS_KEY = "Status";
 const ENGINEER_KEY = "Canonical_Eng";
 const TAG_KEYS = [
   "Official_Tag",
   "LP_Tag_short",
 ];
-
-const PRODUCT_FAMILY_KEY = "BU";
-const BIOS_PREFIX_KEY = "BIOS_first_3_bytes";
-
-const PRODUCT_FAMILY = (Bun.env.PRODUCT_FAMILY || "").toLowerCase();
-const BIOS_VERSION = (Bun.env.BIOS_VERSION || "").toLowerCase();
 
 /**
  * @param {string} deviceName
@@ -51,26 +47,31 @@ const bytes = await client.getFileContents("sutton-platform-tracker.json");
 /** @type {any[]} */
 const platforms = JSON.parse(bytes.toString());
 
-const platform = platforms.find(p => {
+let platform;
+let minDistance = Infinity;
+
+const change = _ => 1;
+const update = (a, b) => a !== b;
+
+for (const p of platforms) {
   const name = p[CODE_NAME_KEY];
   if (!name) {
-    return false;
+    continue;
   }
   const squashedName = name.toLowerCase().replace(/\s/g, "");
-  if (squashedName === squashedCodeName) {
-    return true;
+  const lev = ed.levenshtein(squashedCodeName, squashedName, change, change, update);
+  if (lev.distance < minDistance) {
+    minDistance = lev.distance;
+    platform = p;
   }
-  if (BIOS_VERSION && PRODUCT_FAMILY) {
-    const family = p[PRODUCT_FAMILY_KEY].toLowerCase();
-    const biosPrefix = p[BIOS_PREFIX_KEY].toLowerCase();
-    return family === PRODUCT_FAMILY
-      && biosPrefix
-      && BIOS_VERSION.startsWith(biosPrefix);
-  }
-  return false;
-});
+}
+
 if (!platform) {
   throw new Error(`platform ${codeName} not found`);
+}
+
+if (platform[STATUS_KEY] !== "In-Flight") {
+  throw new Error(`platform ${codeName} is not active`);
 }
 
 const engineer = platform[ENGINEER_KEY];

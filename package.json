@@ -9,6 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "webdav": "^5.3.0"
+    "webdav": "^5.3.0",
+    "edit-distance": "^1.0.0"
   }
 }
