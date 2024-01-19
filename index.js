@@ -58,7 +58,7 @@ for (const p of platforms) {
   if (!name) {
     continue;
   }
-  const squashedName = name.toLowerCase().replace(/\s/g, "");
+  const squashedName = name.toLowerCase().replace(/\s|\.0/g, "");
   const lev = ed.levenshtein(squashedCodeName, squashedName, change, change, update);
   if (lev.distance < minDistance) {
     minDistance = lev.distance;
@@ -70,7 +70,7 @@ if (!platform) {
   throw new Error(`platform ${codeName} not found`);
 }
 
-if (platform[STATUS_KEY] !== "In-Flight" || platform[STATUS_KEY] !== "Pipeline") {
+if (platform[STATUS_KEY] !== "In-Flight" && platform[STATUS_KEY] !== "Pipeline") {
   throw new Error(`platform ${codeName} is not active`);
 }
 
