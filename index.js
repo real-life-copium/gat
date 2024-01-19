@@ -79,7 +79,7 @@ if (!engineer) {
   throw new Error(`platform ${codeName} is missing ${ENGINEER_KEY}`);
 }
 
-const lpTag = TAG_KEYS.map(key => platform[key]).find(t => t) || codeName.toLowerCase();
+const lpTag = TAG_KEYS.map(key => platform[key]).find(t => t) || codeName;
 const tags = [lpTag, `${lpTag}-${index}`];
 if (platform[PLATFORM_KEY]) {
   tags.unshift(platform[PLATFORM_KEY]);
@@ -88,7 +88,7 @@ if (platform[PLATFORM_KEY]) {
 const args = [
   "-p", "sutton",
   "-u", deviceName,
-  "-t", ...tags,
+  "-t", ...tags.map(t => t.toLowerCase()),
   "-a", engineer,
 ];
 
