@@ -55,7 +55,7 @@ const update = (a, b) => a !== b;
 
 for (const p of platforms) {
   const name = p[CODE_NAME_KEY];
-  if (!name) {
+  if (!name || !["In-Flight", "Pipeline"].includes(p[STATUS_KEY])) {
     continue;
   }
   const squashedName = name.toLowerCase().replace(/\s|\.0/g, "");
@@ -68,10 +68,6 @@ for (const p of platforms) {
 
 if (!platform) {
   throw new Error(`platform ${codeName} not found`);
-}
-
-if (platform[STATUS_KEY] !== "In-Flight" && platform[STATUS_KEY] !== "Pipeline") {
-  throw new Error(`platform ${codeName} is not active`);
 }
 
 const engineer = platform[ENGINEER_KEY];
