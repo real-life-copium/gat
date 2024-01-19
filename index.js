@@ -70,7 +70,7 @@ if (!platform) {
   throw new Error(`platform ${codeName} not found`);
 }
 
-if (platform[STATUS_KEY] !== "In-Flight") {
+if (platform[STATUS_KEY] !== "In-Flight" || platform[STATUS_KEY] !== "Pipeline") {
   throw new Error(`platform ${codeName} is not active`);
 }
 
