@@ -11,6 +11,7 @@ const TAG_KEYS = [
   "Official_Tag",
   "LP_Tag_short",
 ];
+const STRATEGIES = new Set(["default", "ignore-status"]);
 
 /**
  * @param {string} deviceName
@@ -28,7 +29,13 @@ function getPlatform(deviceName) {
 }
 
 if (process.argv.length < 3) {
- throw new Error("usage: bun run index.js {DEVICE_NAME}");
+  throw new Error(
+    "usage: bun run index.js {DEVICE_NAME} [STRATEGY]\n" +
+    "  DEVICE_NAME:     the name of the device\n" +
+    "  STRATEGY:        (optional) the strategy to use\n" +
+    "  * default:       use the default strategy\n" +
+    "    ignore-status: ignore the status of the platform"
+  );
 }
 
 if (!Bun.env.WEBDAV_PASSWORD) {
@@ -37,6 +44,8 @@ if (!Bun.env.WEBDAV_PASSWORD) {
 
 const deviceName = process.argv[2];
 const [codeName, squashedCodeName, index] = getPlatform(deviceName);
+
+const strategy = STRATEGIES.has(process.argv[3]) ? process.argv[3] : "default";
 
 const client = createClient(PLATFORMS_PATH, {
   username: "sutton",
@@ -55,8 +64,13 @@ const update = (a, b) => a !== b;
 
 for (const p of platforms) {
   const name = p[CODE_NAME_KEY];
-  if (!name || !["In-Flight", "Pipeline"].includes(p[STATUS_KEY])) {
+  if (!name) {
     continue;
+  }
+  if (strategy !== "ignore-status") {
+    if (!["In-Flight", "Pipeline"].includes(p[STATUS_KEY])) {
+      continue;
+    }
   }
   const squashedName = name.toLowerCase().replace(/\s|\.0/g, "");
   const lev = ed.levenshtein(squashedCodeName, squashedName, change, change, update);
