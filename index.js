@@ -25,7 +25,7 @@ device.forceSet = argv.forceSet;
 const platforms = await fetch(PROJECT);
 if (platforms.length === 0) {
   logger.error("the platforms list is empty");
-  return;
+  process.exit(1);
 }
 
 let min_distance = Infinity;
@@ -43,7 +43,7 @@ for (const platform of platforms) {
 
 if (!closest_platform) {
   logger.error("no platforms found");
-  return;
+  process.exit(1);
 }
 
 closest_platform.codeName = argv.codeName;
