@@ -1,3 +1,6 @@
+# secrets
+secrets.env
+
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 bun.lockb
 
