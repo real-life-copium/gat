@@ -14,7 +14,7 @@ async function fetch(username) {
 
   const platforms_path = `https://oem-share.canonical.com/share/${username}/Platforms`;
   const client = createClient(platforms_path, { username, password });
-  const bytes = await client.getFileContents(`${username}-platform-tracker.json`);
+  const bytes = await client.getFileContents("platform-tracker.json");
   const platforms = JSON.parse(bytes.toString());
   return platforms.map(p => new Platform(p));
 }
