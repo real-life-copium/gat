@@ -12,16 +12,11 @@ const argv = yargs(process.argv.slice(2))
     type: "string",
     description: "The code name of the device",
   })
-  .option("force-set", {
-    type: "boolean",
-    description: "Force set the platform",
-  })
   .help()
   .version()
   .parse();
 
 const device = new Device(argv._[0]);
-device.forceSet = argv.forceSet;
 const platforms = await fetch(PROJECT);
 if (platforms.length === 0) {
   logger.error("the platforms list is empty");

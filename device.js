@@ -66,6 +66,10 @@ export default class Device {
       distance = Math.min(distance, lev.distance);
     }
 
+    if (!platform.isActive) {
+      distance += 2;
+    }
+
     logger.debug(JSON.stringify({ mine, theirs, distance }));
     return distance;
   }
